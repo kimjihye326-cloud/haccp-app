@@ -47,7 +47,7 @@ export default function LoginPage() {
         <div className="flex items-center gap-1 mb-4">
           <img src="/logo.png" alt="회사 로고" className="h-28 object-contain mix-blend-multiply -mr-6" />
           <h1 className="text-3xl font-bold text-gray-900">
-            농산물 전처리 작업장<br/>HACCP 점검 시스템
+            스마트 HACCP
           </h1>
         </div>
 
@@ -101,6 +101,8 @@ export default function LoginPage() {
     </div>
   )
 }
+
+
 
 
 
