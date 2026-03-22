@@ -26,8 +26,8 @@ export default function WorkerDashboard() {
   const handleLogout = () => { logout(); navigate('/login', { replace: true }) }
 
   const cards = [
-    { key: 'cleaning' as const, icon: '🧴', bg: 'bg-blue-50', title: '세척/소독 점검', desc: '소독액 농도 측정 및 기록', path: '/inspect/cleaning' },
-    { key: 'metal' as const, icon: '🔍', bg: 'bg-pink-50', title: '금속검출기 점검', desc: 'Fe/Sus 시편 감지 테스트', path: '/inspect/metal' },
+    { key: 'cleaning' as const, icon: '🧴', bg: 'bg-blue-50', title: 'CCP-1 세척/소독 점검', desc: '소독액 농도 측정 및 기록', path: '/inspect/cleaning' },
+    { key: 'metal' as const, icon: '🔍', bg: 'bg-pink-50', title: 'CCP-2 금속검출기 점검', desc: 'Fe/Sus 시편 감지 테스트', path: '/inspect/metal' },
     { key: 'temperature' as const, icon: '🌡️', bg: 'bg-green-50', title: '온도 점검', desc: '작업장/창고 온도 측정', path: '/inspect/temperature' },
     { key: 'inventory' as const, icon: '📦', bg: 'bg-amber-50', title: '수불부', desc: '양파·감자·생강 입출고 기록', path: '/inventory' },
   ]
@@ -57,4 +57,5 @@ export default function WorkerDashboard() {
     </div>
   )
 }
+
 
