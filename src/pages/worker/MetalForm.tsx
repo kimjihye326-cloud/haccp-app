@@ -98,8 +98,7 @@ export default function MetalForm() {
         </div>
         <div className="flex items-center justify-between mt-4">
           <div className="flex items-center gap-2 py-2 px-4 bg-gray-50 rounded-lg">
-            <span className="text-xs text-gray-500">기록:</span>
-            <span className="text-base font-bold text-blue-600 tabular-nums">{currentTime}</span>
+
           </div>
           {bothSelected && (
             <div className={`py-2 px-6 rounded-lg text-sm font-bold ${isPass ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
@@ -144,4 +143,5 @@ export default function MetalForm() {
     </div>
   )
 }
+
 
