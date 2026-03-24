@@ -61,7 +61,7 @@ export default function MetalForm() {
       <header className="sticky top-0 z-50 bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3">
         <button onClick={() => navigate('/')} className="text-2xl cursor-pointer">←</button>
         <h2 className="flex-1 text-lg font-bold">금속검출기 점검</h2>
-        <span className="text-sm text-gray-500">{currentTime}</span>
+        <span className="text-base font-bold text-blue-600 tabular-nums">{currentTime}</span>
       </header>
       <div className="p-4">
         <div className="flex flex-col md:flex-row gap-4">
@@ -144,3 +144,4 @@ export default function MetalForm() {
     </div>
   )
 }
+

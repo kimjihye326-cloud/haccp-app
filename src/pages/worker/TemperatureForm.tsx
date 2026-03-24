@@ -20,10 +20,10 @@ export default function TemperatureForm() {
   const [photo, setPhoto] = useState<File | null>(null)
   const [photoPreview, setPhotoPreview] = useState('')
   const [submitting, setSubmitting] = useState(false)
-  const [currentTime, setCurrentTime] = useState(new Date())
+  const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString('ko-KR'))
 
   useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000)
+    const timer = setInterval(() => setCurrentTime(new Date().toLocaleTimeString('ko-KR')), 1000)
     return () => clearInterval(timer)
   }, [])
 
@@ -97,8 +97,8 @@ export default function TemperatureForm() {
       <header className="sticky top-0 z-50 bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3">
         <button onClick={() => navigate('/')} className="text-3xl cursor-pointer">←</button>
         <h2 className="flex-1 text-2xl font-bold">온도 점검</h2>
-        <span className="text-base text-gray-500 font-mono">
-          {currentTime.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+        <span className="text-base font-bold text-blue-600 tabular-nums">
+          {currentTime}
         </span>
       </header>
 
@@ -226,4 +226,6 @@ export default function TemperatureForm() {
     </div>
   )
 }
+
+
 
