@@ -20,7 +20,7 @@ export default function WorkerDashboard() {
       supabase.from('temperature_logs').select('log_id', { count: 'exact', head: true }).eq('inspector_id', user!.user_id).eq('inspection_date', today),
       supabase.from('inventory_logs').select('log_id', { count: 'exact', head: true }).eq('recorded_by', user!.user_id).eq('log_date', today),
     ])
-    setCounts({ cleaning: c.count || 0, metal: m.count || 0, temperature: t.count || 0, inventory: inv.count || 0 })
+    setCounts({ cleaning: c.count || 0, metal: m.count || 0, temperature: t.count || 0, inventory: inv.count || 0, hygiene: 0 })
   }
 
   const handleLogout = () => { logout(); navigate('/login', { replace: true }) }
@@ -58,6 +58,7 @@ export default function WorkerDashboard() {
     </div>
   )
 }
+
 
 
 
