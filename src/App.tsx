@@ -9,6 +9,7 @@ import CleaningForm from './pages/worker/CleaningForm'
 import MetalForm from './pages/worker/MetalForm'
 import TemperatureForm from './pages/worker/TemperatureForm'
 import InventoryForm from './pages/worker/InventoryForm'
+import HygieneCheckForm from './pages/worker/HygieneCheckForm'
 import AdminDashboard from './pages/admin/AdminDashboard'
 
 const queryClient = new QueryClient({
@@ -52,6 +53,9 @@ export default function App() {
           <Route path="/inspect/temperature" element={
             <ProtectedRoute><TemperatureForm /></ProtectedRoute>
           } />
+          <Route path="/inspect/hygiene" element={
+            <ProtectedRoute><HygieneCheckForm /></ProtectedRoute>
+          } />
           <Route path="/inventory" element={
             <ProtectedRoute><InventoryForm /></ProtectedRoute>
           } />
@@ -77,3 +81,4 @@ export default function App() {
     </QueryClientProvider>
   )
 }
+

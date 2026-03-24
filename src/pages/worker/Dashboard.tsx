@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../stores/auth-store'
 import { supabase } from '../../lib/supabase'
 
-interface Counts { cleaning: number; metal: number; temperature: number; inventory: number }
+interface Counts { cleaning: number; metal: number; temperature: number; inventory: number; hygiene: number }
 
 export default function WorkerDashboard() {
   const { user, logout } = useAuthStore()
   const navigate = useNavigate()
-  const [counts, setCounts] = useState<Counts>({ cleaning: 0, metal: 0, temperature: 0, inventory: 0 })
+  const [counts, setCounts] = useState<Counts>({ cleaning: 0, metal: 0, temperature: 0, inventory: 0, hygiene: 0 })
   const today = new Date().toISOString().split('T')[0]
 
   useEffect(() => { if (user) loadCounts() }, [user])
@@ -27,6 +27,7 @@ export default function WorkerDashboard() {
 
   const cards = [
     { key: 'cleaning' as const, icon: '🧴', bg: 'bg-blue-50', title: 'CCP-1 세척/소독 점검', desc: '소독액 농도 측정 및 기록', path: '/inspect/cleaning' },
+    { key: 'hygiene' as const, icon: '📋', bg: 'bg-purple-50', title: '위생점검', desc: '일반위생관리 및 공정점검', path: '/inspect/hygiene' },
     { key: 'metal' as const, icon: '🔍', bg: 'bg-pink-50', title: 'CCP-2 금속검출기 점검', desc: 'Fe/Sus 시편 감지 테스트', path: '/inspect/metal' },
     { key: 'temperature' as const, icon: '🌡️', bg: 'bg-green-50', title: '온도 점검', desc: '작업장/창고 온도 측정', path: '/inspect/temperature' },
     { key: 'inventory' as const, icon: '📦', bg: 'bg-amber-50', title: '수불부', desc: '양파·감자·생강 입출고 기록', path: '/inventory' },
@@ -57,5 +58,8 @@ export default function WorkerDashboard() {
     </div>
   )
 }
+
+
+
 
 
