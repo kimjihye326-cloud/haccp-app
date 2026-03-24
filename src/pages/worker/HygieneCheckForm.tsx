@@ -33,9 +33,7 @@ const CHECKLIST: Record<Period, { category: string; text: string }[]> = {
     { category: '설비', text: '파손되거나 고장 난 제조설비가 있는가?' },
   ],
   DAILY_D: [
-    { category: '온도관리', text: '냉장/냉동 제품 입고 시 배송차량온도 및 품질온도는 적절한가? (온도는 육안검사일지에 기록)' },
-    { category: '온도관리', text: '냉장창고의 온도가 적절하게 관리되고 있는가? (냉장 참고: 10°C)' },
-    { category: '공정관리', text: '청결구역작업과 일반구역작업이 분리되어 있으며 오염되지 않도록 관리되고 있는가?' },
+{ category: '공정관리', text: '청결구역작업과 일반구역작업이 분리되어 있으며 오염되지 않도록 관리되고 있는가?' },
     { category: '공정관리', text: '소독·세정·공정이 적절히 관리되고 있는가?' },
     { category: '공정관리', text: '완제품의 포장상태가 양호한가?' },
     { category: '모니터링', text: '모니터링장비(온도계 등)는 사용 전·후 세척·소독을 실시하고 있는가?' },
@@ -228,5 +226,6 @@ export default function HygieneCheckForm() {
     </div>
   )
 }
+
 
 
