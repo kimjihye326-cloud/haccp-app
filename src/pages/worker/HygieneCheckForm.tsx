@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { supabase } from '../../lib/supabase'
 import { useAuthStore } from '../../stores/auth-store'
@@ -69,11 +69,18 @@ const CHECKLIST: Record<Period, { category: string; text: string }[]> = {
 export default function HygieneCheckForm() {
   const { user } = useAuthStore()
   const navigate = useNavigate()
-  const [period, setPeriod] = useState<Period>('DAILY_B')
+  const [searchParams] = useSearchParams()
+  const initialPeriod = (searchParams.get('period') as Period) || 'DAILY_B'
+  const [period, setPeriod] = useState<Period>(initialPeriod)
   const [checkDate, setCheckDate] = useState(() => new Date().toISOString().slice(0, 10))
   const [items, setItems] = useState<CheckItem[]>([])
   const [submitting, setSubmitting] = useState(false)
   const [existingData, setExistingData] = useState(false)
+  const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString('ko-KR'))
+  useEffect(() => {
+    const t = setInterval(() => setCurrentTime(new Date().toLocaleTimeString('ko-KR')), 1000)
+    return () => clearInterval(t)
+  }, [])
 
   useEffect(() => {
     const list = CHECKLIST[period].map(c => ({ category: c.category, text: c.text, result: 'OK' as Result, action: '' }))
@@ -147,6 +154,7 @@ export default function HygieneCheckForm() {
       <header className="sticky top-0 z-50 bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3">
         <button onClick={() => navigate('/')} className="text-3xl cursor-pointer">←</button>
         <h2 className="flex-1 text-xl font-bold">일반위생관리 및 공정점검</h2>
+        <span className="text-base font-bold text-blue-600 tabular-nums">{currentTime}</span>
         <input type="date" value={checkDate} onChange={e => setCheckDate(e.target.value)}
           className="border border-gray-300 rounded-lg px-3 py-1.5 text-base font-semibold" />
       </header>
@@ -220,3 +228,5 @@ export default function HygieneCheckForm() {
     </div>
   )
 }
+
+

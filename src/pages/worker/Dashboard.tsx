@@ -27,7 +27,10 @@ export default function WorkerDashboard() {
 
   const cards = [
     { key: 'cleaning' as const, icon: '🧴', bg: 'bg-blue-50', title: 'CCP-1 세척/소독 점검', desc: '소독액 농도 측정 및 기록', path: '/inspect/cleaning' },
-    { key: 'hygiene' as const, icon: '📋', bg: 'bg-purple-50', title: '위생점검', desc: '일반위생관리 및 공정점검', path: '/inspect/hygiene' },
+    { key: 'hygiene' as const, icon: '📋', bg: 'bg-purple-50', title: '위생점검(일일)', desc: '작업 전·중·후 / 입고 시', path: '/inspect/hygiene' },
+    ...(new Date().getDay() === 1 ? [{ key: 'hygiene' as const, icon: '📅', bg: 'bg-purple-50', title: '위생점검(주간)', desc: '매주 월요일 점검', path: '/inspect/hygiene?period=WEEKLY' }] : []),
+    ...(new Date().getDate() === 1 ? [{ key: 'hygiene' as const, icon: '🗓️', bg: 'bg-purple-50', title: '위생점검(월간)', desc: '매월 1일 점검', path: '/inspect/hygiene?period=MONTHLY' }] : []),
+    ...(new Date().getMonth() === 0 && new Date().getDate() === 1 ? [{ key: 'hygiene' as const, icon: '📋', bg: 'bg-orange-50', title: '위생점검(연간)', desc: '매년 1월 점검', path: '/inspect/hygiene?period=YEARLY' }] : []),
     { key: 'metal' as const, icon: '🔍', bg: 'bg-pink-50', title: 'CCP-2 금속검출기 점검', desc: 'Fe/Sus 시편 감지 테스트', path: '/inspect/metal' },
     { key: 'temperature' as const, icon: '🌡️', bg: 'bg-green-50', title: '온도 점검', desc: '작업장/창고 온도 측정', path: '/inspect/temperature' },
     { key: 'inventory' as const, icon: '📦', bg: 'bg-amber-50', title: '수불부', desc: '양파·감자·생강 입출고 기록', path: '/inventory' },
@@ -58,6 +61,7 @@ export default function WorkerDashboard() {
     </div>
   )
 }
+
 
 
 

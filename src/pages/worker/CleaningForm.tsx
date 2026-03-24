@@ -20,6 +20,11 @@ export default function CleaningForm() {
   const [result, setResult] = useState<'pass' | 'fail' | ''>('')
   const [action, setAction] = useState('')
   const [photo, setPhoto] = useState<File | null>(null)
+  const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString('ko-KR'))
+  useEffect(() => {
+    const t = setInterval(() => setCurrentTime(new Date().toLocaleTimeString('ko-KR')), 1000)
+    return () => clearInterval(t)
+  }, [])
   const [photoPreview, setPhotoPreview] = useState('')
   const [standard, setStandard] = useState<CcpMaster | null>(null)
   const [submitting, setSubmitting] = useState(false)
@@ -84,7 +89,7 @@ export default function CleaningForm() {
       <header className="sticky top-0 z-50 bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3">
         <button onClick={() => step > 1 ? setStep(step - 1) : navigate('/')} className="text-2xl cursor-pointer">←</button>
         <h2 className="flex-1 text-xl font-bold">세척/소독 점검</h2>
-        <span className="text-sm text-gray-500">{new Date().toLocaleTimeString('ko-KR')}</span>
+        <span className="text-base font-bold text-blue-600 tabular-nums">{currentTime}</span>
       </header>
       <div className="p-4">
         {step === 1 && (
@@ -220,3 +225,4 @@ export default function CleaningForm() {
     </div>
   )
 }
+
