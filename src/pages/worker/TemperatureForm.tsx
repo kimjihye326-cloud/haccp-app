@@ -6,8 +6,8 @@ import { uploadInspectionPhoto } from '../../lib/supabase'
 import { useAuthStore } from '../../stores/auth-store'
 import NumPad from '../../components/common/NumPad'
 
-const LOCATIONS = ['작업장', '저온창고', '원료보관실', '출하장']
-const LOC_ICONS: Record<string, string> = { '작업장': '🏭', '저온창고': '🧊', '원료보관실': '📦', '출하장': '🚛' }
+const LOCATIONS = ['원재료냉장창고', '완제품냉장창고']
+const LOC_ICONS: Record<string, string> = { '원재료냉장창고': '📦', '완제품냉장창고': '🧊' }
 
 export default function TemperatureForm() {
   const { user } = useAuthStore()
@@ -226,6 +226,7 @@ export default function TemperatureForm() {
     </div>
   )
 }
+
 
 
 
