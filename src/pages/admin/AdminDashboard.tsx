@@ -16,6 +16,9 @@ export default function AdminDashboard() {
   const [cleaning, setCleaning] = useState<CleaningLog[]>([])
   const [metal, setMetal] = useState<MetalLog[]>([])
   const [temperature, setTemperature] = useState<TemperatureLog[]>([])
+  const [healthData, setHealthData] = useState<any[]>([])
+  const [hygieneData, setHygieneData] = useState<any[]>([])
+  const [sanitationData, setSanitationData] = useState<any[]>([])
   const [invSummary, setInvSummary] = useState<InventorySummary[]>([])
   const [invLogs, setInvLogs] = useState<InventoryLog[]>([])
   const [standards, setStandards] = useState<any[]>([])
@@ -51,13 +54,19 @@ export default function AdminDashboard() {
   }, [])
 
   async function loadMonitor() {
-    const [c, m, t] = await Promise.all([
+    const [c, m, t, h, hy, sa] = await Promise.all([
       supabase.from('cleaning_logs').select('*, users!inspector_id(name)').eq('inspection_date', today).order('created_at', { ascending: false }),
       supabase.from('metal_logs').select('*, users!inspector_id(name)').eq('inspection_date', today).order('created_at', { ascending: false }),
       supabase.from('temperature_logs').select('*, users!inspector_id(name)').eq('inspection_date', today).order('created_at', { ascending: false }),
+      supabase.from('health_checks').select('*, users!inspector_id(name)').eq('check_date', today).order('created_at', { ascending: false }),
+      supabase.from('hygiene_checks').select('*, users!inspector_id(name)').eq('check_date', today).order('created_at', { ascending: false }),
+      supabase.from('sanitation_logs').select('*, users!inspector_id(name)').eq('check_date', today).order('created_at', { ascending: false }),
     ])
     if (c.data) setCleaning(c.data as CleaningLog[])
     if (m.data) setMetal(m.data as MetalLog[])
+    if (h.data) setHealthData(h.data)
+    if (hy.data) setHygieneData(hy.data)
+    if (sa.data) setSanitationData(sa.data)
     if (t.data) setTemperature(t.data as TemperatureLog[])
   }
 
@@ -128,7 +137,7 @@ export default function AdminDashboard() {
 
   const handleLogout = () => { logout(); navigate('/login', { replace: true }) }
 
-  const allLogs = [...cleaning, ...metal, ...temperature]
+  const allLogs = [...cleaning, ...metal, ...temperature, ...healthData, ...hygieneData, ...sanitationData]
   const totalCount = allLogs.length
   const passCount = allLogs.filter(l => l.is_passed).length
   const failCount = allLogs.filter(l => !l.is_passed).length
@@ -607,6 +616,8 @@ export default function AdminDashboard() {
     </div>
   )
 }
+
+
 
 
 
