@@ -28,7 +28,10 @@ export default function WorkerDashboard() {
 
   const cards: { key: keyof Counts; title: string; desc: string; path: string; color: string }[] = [
     { key: 'health', title: '종사자위생점검', desc: '건강상태 및 위생 확인', path: '/inspect/health', color: 'border-red-200 bg-red-50' },
-    { key: 'hygiene', title: '일일위생점검', desc: '일반위생관리 및 공정점검', path: '/inspect/hygiene', color: 'border-purple-200 bg-purple-50' },
+    { key: 'hygiene', title: '일일위생점검', desc: '작업 전·중·후 / 입고 시', path: '/inspect/hygiene', color: 'border-purple-200 bg-purple-50' },
+    ...(new Date().getDay() === 1 ? [{ key: 'hygiene' as keyof Counts, title: '주간위생점검', desc: '매주 월요일 점검', path: '/inspect/hygiene?period=WEEKLY', color: 'border-violet-200 bg-violet-50' }] : []),
+    ...(new Date().getDate() === 1 ? [{ key: 'hygiene' as keyof Counts, title: '월간위생점검', desc: '매월 1일 점검', path: '/inspect/hygiene?period=MONTHLY', color: 'border-indigo-200 bg-indigo-50' }] : []),
+    ...(new Date().getMonth() === 0 && new Date().getDate() === 1 ? [{ key: 'hygiene' as keyof Counts, title: '연간위생점검', desc: '매년 1월 점검', path: '/inspect/hygiene?period=YEARLY', color: 'border-orange-200 bg-orange-50' }] : []),
     { key: 'ccp1', title: 'CCP-1B', desc: '세척/소독 점검', path: '/inspect/cleaning', color: 'border-blue-200 bg-blue-50' },
     { key: 'ccp2', title: 'CCP-2P', desc: '금속검출기 점검', path: '/inspect/metal', color: 'border-pink-200 bg-pink-50' },
     { key: 'warehouse', title: '창고관리점검', desc: '냉장창고 온도 및 관리', path: '/inspect/warehouse', color: 'border-green-200 bg-green-50' },
@@ -60,3 +63,4 @@ export default function WorkerDashboard() {
     </div>
   )
 }
+
