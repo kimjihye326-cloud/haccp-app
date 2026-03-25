@@ -57,7 +57,7 @@ export default function TemperatureForm() {
   }, [tempStr])
 
   const tempValue = tempStr ? parseFloat((isMinus ? '-' : '') + tempStr) : null
-  const isPassed = tempValue !== null && standard ? tempValue >= standard.min && tempValue <= standard.max : null
+  const isPassed = tempValue !== null && standard ? tempValue >= standard.min && tempValue <= standard.max : true
 
   const handlePhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -226,6 +226,7 @@ export default function TemperatureForm() {
     </div>
   )
 }
+
 
 
 
