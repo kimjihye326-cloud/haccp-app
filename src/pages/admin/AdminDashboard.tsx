@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../stores/auth-store'
 import { supabase } from '../../lib/supabase'
 import toast from 'react-hot-toast'
+import jsPDF from 'jspdf'
+import 'jspdf-autotable'
 import type { CleaningLog, MetalLog, TemperatureLog, InventorySummary, InventoryLog } from '../../types/database'
 
-type Tab = 'monitor' | 'inventory' | 'standards' | 'verification'
+type Tab = 'monitor' | 'inventory' | 'standards' | 'verification' | 'reports'
 
 export default function AdminDashboard() {
   const { user, logout } = useAuthStore()
@@ -33,6 +35,8 @@ export default function AdminDashboard() {
   ])
   const [verificationDate, setVerificationDate] = useState(new Date().toISOString().slice(0, 10))
   const [verificationMemo, setVerificationMemo] = useState('')
+  const [reportMonth, setReportMonth] = useState(new Date().toISOString().slice(0, 7))
+  const [generating, setGenerating] = useState(false)
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editForm, setEditForm] = useState({ parameter_name: '', min_limit: '', max_limit: '', unit: '', description: '' })
   const [saving, setSaving] = useState(false)
@@ -135,6 +139,7 @@ export default function AdminDashboard() {
     { key: 'inventory', label: '수불부 현황' },
     { key: 'standards', label: '기준 정보 관리' },
     { key: 'verification', label: '중요관리점 검증점검표' },
+    { key: 'reports', label: '월별 보고서 출력' },
   ]
 
   const typeBadge = { IN: 'bg-blue-100 text-blue-700', OUT: 'bg-green-100 text-green-700', LOSS: 'bg-red-100 text-red-700' } as const
@@ -501,6 +506,55 @@ export default function AdminDashboard() {
             </div>
           </div>
         )}
+        {activeTab === 'reports' && (
+          <div className="space-y-6">
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <h3 className="text-lg font-bold mb-4">월별 보고서 출력</h3>
+              <div className="flex items-center gap-4 mb-6">
+                <input type="month" value={reportMonth} onChange={e => setReportMonth(e.target.value)}
+                  className="border border-gray-300 rounded-lg px-4 py-2 text-base font-semibold" />
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {[
+                  { label: 'CCP-1B 세척/소독', table: 'cleaning_logs', dateCol: 'inspection_date' },
+                  { label: 'CCP-2P 금속검출기', table: 'metal_logs', dateCol: 'inspection_date' },
+                  { label: '창고관리(온도)', table: 'temperature_logs', dateCol: 'inspection_date' },
+                  { label: '일일위생점검', table: 'hygiene_checks', dateCol: 'check_date' },
+                  { label: '종사자위생점검', table: 'health_checks', dateCol: 'check_date' },
+                  { label: '조리시설기구소독', table: 'sanitation_logs', dateCol: 'check_date' },
+                ].map(report => (
+                  <button key={report.table} disabled={generating}
+                    onClick={async () => {
+                      setGenerating(true)
+                      try {
+                        const startDate = reportMonth + '-01'
+                        const endDate = new Date(parseInt(reportMonth.split('-')[0]), parseInt(reportMonth.split('-')[1]), 0).toISOString().split('T')[0]
+                        const { data, error } = await supabase.from(report.table).select('*').gte(report.dateCol, startDate).lte(report.dateCol, endDate).order(report.dateCol)
+                        if (error) throw error
+                        if (!data || data.length === 0) { toast.error('해당 월에 데이터가 없습니다.'); return }
+                        const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' })
+                        doc.setFont('helvetica')
+                        doc.setFontSize(16)
+                        doc.text(report.label + ' - ' + reportMonth, 14, 15)
+                        doc.setFontSize(10)
+                        doc.text('출력일: ' + new Date().toLocaleDateString('ko-KR'), 14, 22)
+                        const cols = Object.keys(data[0]).filter(k => k !== 'inspector_id' && k !== 'created_at' && k !== 'photo_url' && k !== 'approval_signature')
+                        const rows = data.map(row => cols.map(c => { const v = row[c]; return v === true ? 'O' : v === false ? 'X' : v === null ? '-' : String(v) }));
+                        (doc as any).autoTable({ head: [cols], body: rows, startY: 28, styles: { fontSize: 7, cellPadding: 2 }, headStyles: { fillColor: [37, 99, 235], fontSize: 7 }, theme: 'grid' })
+                        doc.save(report.label + '_' + reportMonth + '.pdf')
+                        toast.success(report.label + ' PDF 다운로드 완료')
+                      } catch (err: any) { toast.error('PDF 생성 실패: ' + err.message) }
+                      finally { setGenerating(false) }
+                    }}
+                    className={`p-5 rounded-xl border-2 text-left transition-all cursor-pointer ${generating ? 'border-gray-200 bg-gray-50 cursor-not-allowed' : 'border-gray-200 bg-white hover:border-blue-400 hover:bg-blue-50'}`}>
+                    <p className="text-base font-bold text-gray-800">{report.label}</p>
+                    <p className="text-sm text-gray-500 mt-1">PDF 다운로드</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
         {activeTab === 'verification' && (
           <div className="space-y-6">
             <div className="bg-white rounded-xl shadow-sm p-6">
@@ -553,5 +607,8 @@ export default function AdminDashboard() {
     </div>
   )
 }
+
+
+
 
 
