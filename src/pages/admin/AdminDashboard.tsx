@@ -339,6 +339,42 @@ export default function AdminDashboard() {
                 </table>
               </div>
             </div>
+
+            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+              <h3 className="px-5 py-4 font-semibold bg-gray-50 border-b border-gray-200 text-sm">종사자위생점검</h3>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="bg-gray-50 text-gray-600"><tr><th className="px-4 py-3 text-left">시간</th><th className="px-4 py-3 text-left">점검자</th><th className="px-4 py-3 text-left">질문</th><th className="px-4 py-3 text-center">응답</th></tr></thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {healthData.length === 0 ? (<tr><td colSpan={4} className="px-4 py-8 text-center text-gray-400">오늘 데이터 없음</td></tr>) : healthData.map((row: any, i: number) => (<tr key={i} className="hover:bg-gray-50"><td className="px-4 py-2.5 text-gray-500">{new Date(row.created_at).toLocaleTimeString("ko-KR", {hour:"2-digit",minute:"2-digit"})}</td><td className="px-4 py-2.5">{row.users?.name || "-"}</td><td className="px-4 py-2.5">{row.question}</td><td className="px-4 py-2.5 text-center"><span className={`px-2 py-1 rounded-full text-xs font-bold ${row.answer ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>{row.answer ? "정상" : "이상"}</span></td></tr>))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+              <h3 className="px-5 py-4 font-semibold bg-gray-50 border-b border-gray-200 text-sm">일일위생점검</h3>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="bg-gray-50 text-gray-600"><tr><th className="px-4 py-3 text-left">시간</th><th className="px-4 py-3 text-left">점검자</th><th className="px-4 py-3 text-left">구분</th><th className="px-4 py-3 text-left">항목</th><th className="px-4 py-3 text-center">결과</th></tr></thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {hygieneData.length === 0 ? (<tr><td colSpan={5} className="px-4 py-8 text-center text-gray-400">오늘 데이터 없음</td></tr>) : hygieneData.map((row: any, i: number) => (<tr key={i} className="hover:bg-gray-50"><td className="px-4 py-2.5 text-gray-500">{new Date(row.created_at).toLocaleTimeString("ko-KR", {hour:"2-digit",minute:"2-digit"})}</td><td className="px-4 py-2.5">{row.users?.name || "-"}</td><td className="px-4 py-2.5">{row.category || row.period || "-"}</td><td className="px-4 py-2.5">{row.item_name || row.check_item || "-"}</td><td className="px-4 py-2.5 text-center"><span className={`px-2 py-1 rounded-full text-xs font-bold ${row.result === "OK" || row.result === "양호" ? "bg-green-100 text-green-700" : row.result === "FAIL" || row.result === "불량" ? "bg-red-100 text-red-700" : "bg-gray-100 text-gray-500"}`}>{row.result || "-"}</span></td></tr>))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+              <h3 className="px-5 py-4 font-semibold bg-gray-50 border-b border-gray-200 text-sm">조리시설기구소독관리</h3>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="bg-gray-50 text-gray-600"><tr><th className="px-4 py-3 text-left">시간</th><th className="px-4 py-3 text-left">점검자</th><th className="px-4 py-3 text-left">대상</th><th className="px-4 py-3 text-center">소독완료</th></tr></thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {sanitationData.length === 0 ? (<tr><td colSpan={4} className="px-4 py-8 text-center text-gray-400">오늘 데이터 없음</td></tr>) : sanitationData.map((row: any, i: number) => (<tr key={i} className="hover:bg-gray-50"><td className="px-4 py-2.5 text-gray-500">{new Date(row.created_at).toLocaleTimeString("ko-KR", {hour:"2-digit",minute:"2-digit"})}</td><td className="px-4 py-2.5">{row.users?.name || "-"}</td><td className="px-4 py-2.5">{row.target_name}</td><td className="px-4 py-2.5 text-center"><span className={`px-2 py-1 rounded-full text-xs font-bold ${row.is_done ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>{row.is_done ? "완료" : "미완료"}</span></td></tr>))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         )}
 
