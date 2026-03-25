@@ -5,7 +5,7 @@ import { supabase } from '../../lib/supabase'
 import toast from 'react-hot-toast'
 import type { CleaningLog, MetalLog, TemperatureLog, InventorySummary, InventoryLog } from '../../types/database'
 
-type Tab = 'monitor' | 'inventory' | 'standards'
+type Tab = 'monitor' | 'inventory' | 'standards' | 'verification'
 
 export default function AdminDashboard() {
   const { user, logout } = useAuthStore()
@@ -17,6 +17,22 @@ export default function AdminDashboard() {
   const [invSummary, setInvSummary] = useState<InventorySummary[]>([])
   const [invLogs, setInvLogs] = useState<InventoryLog[]>([])
   const [standards, setStandards] = useState<any[]>([])
+  const [verificationItems, setVerificationItems] = useState([
+    { process: '소독세척공정', items: [
+      { text: '종사자가 주기적으로 원료량, 세척시간, 세척수 양을 확인하고, 그 내용을 기록하고 있습니까?', answer: '' },
+      { text: '계측기 (저울, 타이머)는 연1회 이상 검교정이 이루어지고 있습니까?', answer: '' },
+      { text: '모니터링 행동 관찰 결과는 양호합니까?', answer: '' },
+      { text: '모니터링 담당자 인터뷰 결과는 양호합니까?', answer: '' },
+    ]},
+    { process: '금속검출공정', items: [
+      { text: '계측기는 연1회 이상 검교정이 이루어지고 있습니까?', answer: '' },
+      { text: '모니터링 일지가 정상 작성되고 있습니까?', answer: '' },
+      { text: '모니터링 행동 관찰 결과는 양호합니까?', answer: '' },
+      { text: '모니터링 담당자 인터뷰 결과는 양호합니까?', answer: '' },
+    ]},
+  ])
+  const [verificationDate, setVerificationDate] = useState(new Date().toISOString().slice(0, 10))
+  const [verificationMemo, setVerificationMemo] = useState('')
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editForm, setEditForm] = useState({ parameter_name: '', min_limit: '', max_limit: '', unit: '', description: '' })
   const [saving, setSaving] = useState(false)
@@ -118,6 +134,7 @@ export default function AdminDashboard() {
     { key: 'monitor', label: '실시간 모니터링' },
     { key: 'inventory', label: '수불부 현황' },
     { key: 'standards', label: '기준 정보 관리' },
+    { key: 'verification', label: '중요관리점 검증점검표' },
   ]
 
   const typeBadge = { IN: 'bg-blue-100 text-blue-700', OUT: 'bg-green-100 text-green-700', LOSS: 'bg-red-100 text-red-700' } as const
@@ -484,7 +501,57 @@ export default function AdminDashboard() {
             </div>
           </div>
         )}
+        {activeTab === 'verification' && (
+          <div className="space-y-6">
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <div className="flex items-center gap-4 mb-6">
+                <h3 className="text-lg font-bold">중요관리점(CCP) 검증점검표</h3>
+                <input type="date" value={verificationDate} onChange={e => setVerificationDate(e.target.value)}
+                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold" />
+              </div>
+              {verificationItems.map((proc, pi) => (
+                <div key={pi} className="mb-6">
+                  <h4 className="text-base font-bold text-gray-800 mb-3 px-2 py-2 bg-gray-50 rounded-lg">{proc.process}</h4>
+                  <div className="space-y-3">
+                    {proc.items.map((item, ii) => (
+                      <div key={ii} className="flex items-start gap-4 p-4 border border-gray-200 rounded-xl">
+                        <p className="flex-1 text-sm text-gray-700">{item.text}</p>
+                        <div className="flex gap-2 shrink-0">
+                          <button onClick={() => { const n = [...verificationItems]; n[pi].items[ii].answer = '예'; setVerificationItems(n) }}
+                            className={`px-4 py-2 rounded-lg text-sm font-bold cursor-pointer border-2 ${item.answer === '예' ? 'border-green-600 bg-green-50 text-green-700' : 'border-gray-200 bg-white text-gray-500'}`}>예</button>
+                          <button onClick={() => { const n = [...verificationItems]; n[pi].items[ii].answer = '아니오'; setVerificationItems(n) }}
+                            className={`px-4 py-2 rounded-lg text-sm font-bold cursor-pointer border-2 ${item.answer === '아니오' ? 'border-red-600 bg-red-50 text-red-700' : 'border-gray-200 bg-white text-gray-500'}`}>아니오</button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+              <div className="mt-4">
+                <label className="block text-sm font-bold text-gray-700 mb-2">비고</label>
+                <textarea value={verificationMemo} onChange={e => setVerificationMemo(e.target.value)} rows={3}
+                  placeholder="검증 관련 메모" className="w-full p-3 border border-gray-300 rounded-xl text-sm outline-none" />
+              </div>
+              <button onClick={async () => {
+                const unanswered = verificationItems.some(p => p.items.some(i => !i.answer))
+                if (unanswered) { toast.error('모든 항목에 답변해주세요.'); return }
+                try {
+                  const rows = verificationItems.flatMap(p => p.items.map(i => ({
+                    inspector_id: user!.user_id, check_date: verificationDate,
+                    process_name: p.process, item_text: i.text, answer: i.answer,
+                    memo: verificationMemo || null,
+                  })))
+                  const { error } = await supabase.from('verification_checks').insert(rows)
+                  if (error) throw error
+                  toast.success('검증점검표 저장 완료')
+                } catch (err: any) { toast.error('저장 실패: ' + err.message) }
+              }} className="w-full mt-4 py-4 text-lg font-bold text-white bg-blue-600 rounded-xl cursor-pointer active:scale-[0.98]">저장</button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
 }
+
+
