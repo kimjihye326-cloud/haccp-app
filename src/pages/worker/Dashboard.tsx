@@ -48,19 +48,20 @@ export default function WorkerDashboard() {
           <button onClick={handleLogout} className="px-3 py-1.5 rounded-lg bg-gray-100 text-sm font-semibold cursor-pointer active:bg-gray-200">로그아웃</button>
         </div>
       </header>
-      <div className="p-4 space-y-3">
+      <div className="p-4 grid grid-cols-2 gap-3">
         {cards.map(card => (
           <button key={card.key} onClick={() => navigate(card.path)}
-            className={`w-full flex items-center justify-between p-5 rounded-2xl border-2 cursor-pointer transition-all active:scale-[0.98] ${card.color}`}>
+            className={`w-full flex flex-col items-start p-4 rounded-2xl border-2 cursor-pointer transition-all active:scale-[0.98] ${card.color}`}>
             <div className="text-left">
-              <h3 className="text-lg font-bold text-gray-900">{card.title}</h3>
+              <h3 className="text-base font-bold text-gray-900">{card.title}</h3>
               <p className="text-sm text-gray-500 mt-0.5">{card.desc}</p>
             </div>
-            <span className="text-blue-600 font-bold text-base">{counts[card.key]}건</span>
+            <span className="text-blue-600 font-bold text-sm mt-2">{counts[card.key]}건</span>
           </button>
         ))}
       </div>
     </div>
   )
 }
+
 
