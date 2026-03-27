@@ -30,12 +30,7 @@ export default function CleaningForm() {
       .then(({ data }) => { if (data) setStandard(data as CcpMaster) })
   }, [])
 
-  useEffect(() => {
-    if (!ppmStr || !standard) { setResult(''); return }
-    const ppm = parseFloat(ppmStr)
-    if (isNaN(ppm)) { setResult(''); return }
-    setResult(ppm >= parseFloat(String(standard.min_limit)) && ppm <= parseFloat(String(standard.max_limit)) ? 'pass' : 'fail')
-  }, [ppmStr, standard])
+  // 판정은 저장 시에만 수행
 
   const handleNumPad = useCallback((key: string) => {
     if (key === 'C') { setPpmStr(''); setResult('') }
@@ -53,8 +48,13 @@ export default function CleaningForm() {
   }
 
   const handleSubmit = async () => {
-    if (!result) return toast.error('농도를 입력해주세요.')
-    if (result === 'fail' && !action.trim()) return toast.error('부적합 시 조치사항을 입력해주세요.')
+    if (!ppmStr) return toast.error('농도를 입력해주세요.')
+    const ppm = parseFloat(ppmStr)
+    if (isNaN(ppm)) return toast.error('올바른 숫자를 입력해주세요.')
+    const judged = ppm >= parseFloat(String(standard?.min_limit || 100)) && ppm <= parseFloat(String(standard?.max_limit || 200)) ? 'pass' : 'fail'
+    setResult(judged)
+    if (judged === 'fail') return
+    // 조치사항은 모달에서 처리
     setSubmitting(true)
     try {
       let photoUrl: string | null = null
@@ -149,4 +149,5 @@ export default function CleaningForm() {
     </div>
   )
 }
+
 
