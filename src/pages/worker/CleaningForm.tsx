@@ -34,7 +34,7 @@ export default function CleaningForm() {
     if (!ppmStr || !standard) { setResult(''); return }
     const ppm = parseFloat(ppmStr)
     if (isNaN(ppm)) { setResult(''); return }
-    setResult(ppm >= standard.min_limit && ppm <= standard.max_limit ? 'pass' : 'fail')
+    setResult(ppm >= parseFloat(String(standard.min_limit)) && ppm <= parseFloat(String(standard.max_limit)) ? 'pass' : 'fail')
   }, [ppmStr, standard])
 
   const handleNumPad = useCallback((key: string) => {
@@ -149,3 +149,4 @@ export default function CleaningForm() {
     </div>
   )
 }
+
