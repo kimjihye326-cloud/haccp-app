@@ -137,11 +137,12 @@ export default function AdminDashboard() {
 
   const handleLogout = () => { logout(); navigate('/login', { replace: true }) }
 
-  const allLogs = [...cleaning, ...metal, ...temperature, ...healthData, ...hygieneData, ...sanitationData]
+  const ccpLogs = [...cleaning, ...metal, ...temperature]
+  const allLogs = [...ccpLogs, ...healthData, ...hygieneData, ...sanitationData]
   const totalCount = allLogs.length
-  const passCount = allLogs.filter(l => l.is_passed).length
-  const failCount = allLogs.filter(l => !l.is_passed).length
-  const pendingCount = allLogs.filter(l => l.approval_status === 'PENDING').length
+  const passCount = ccpLogs.filter(l => l.is_passed).length
+  const failCount = ccpLogs.filter(l => l.is_passed === false).length
+  const pendingCount = ccpLogs.filter(l => l.approval_status === 'PENDING').length
 
   const tabs: { key: Tab; label: string }[] = [
     { key: 'monitor', label: '실시간 모니터링' },
@@ -652,6 +653,8 @@ export default function AdminDashboard() {
     </div>
   )
 }
+
+
 
 
 
